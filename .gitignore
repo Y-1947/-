@@ -1,0 +1,5 @@
+.env
+node_modules/
+.runtime/
+test-results/
+.netlify/

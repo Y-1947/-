@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"><title>粤美海幢 · 人像融合实验室</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="/">
+      <img src="assets/haichuang-logo.png" alt="">
+      <span><strong>粤美海幢</strong><small>HAICHUANG · SCENE STUDIO</small></span>
+    </a>
+    <button id="settingsBtn" class="quiet" aria-label="云端设置" title="云端设置" aria-describedby="connection">⚙</button>
+  </div>
+</header>
+<main>
+  <section class="intro">
+    <h1>让这一刻，<em>融入风景</em></h1>
+    <p>选一张海幢街模板，拍下你的样子，把你写进这张报纸里。</p>
+  </section>
+  <section class="stage" aria-labelledby="templatesTitle">
+    <h2 class="section-title" id="templatesTitle"><span>01</span>选择模板</h2>
+    <div id="templates" class="templates" role="group" aria-labelledby="templatesTitle"></div>
+  </section>
+  <section class="stage" aria-labelledby="sourceTitle">
+    <h2 class="section-title" id="sourceTitle"><span>02</span>拍摄 / 上传人像</h2>
+    <div class="photo-actions" id="drop">
+      <button id="cameraBtn" class="primary"><span aria-hidden="true">◉</span> 拍摄</button>
+      <button id="uploadBtn" class="secondary"><span aria-hidden="true">↑</span> 上传照片</button>
+      <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" hidden>
+    </div>
+  </section>
+  <section class="stage result-stage" aria-labelledby="resultTitle">
+    <h2 class="section-title" id="resultTitle"><span>03</span>入景效果</h2>
+    <div id="actionStatus"></div>
+    <div class="result-actions">
+      <button id="generate" class="primary" hidden disabled>开始 AI 入景</button>
+      <button id="cancel" class="secondary" hidden>停止本地等待</button>
+      <button id="download" class="secondary" hidden disabled>下载融合图片 ↓</button>
+      <button id="compare" class="text-btn" hidden disabled>查看 AI 处理前</button>
+    </div>
+    <div id="progressPanel" class="generation-progress" hidden>
+      <div><span id="progressStage">预计进度</span><span id="progressPercent">0%</span></div>
+      <progress id="progress" max="100" value="0" aria-labelledby="progressStage"></progress>
+    </div>
+    <div id="resultPanel" class="preview-panel">
+      <button type="button" id="zoomPoster" class="poster-trigger" aria-label="放大查看海报" disabled hidden>
+        <canvas id="canvas" width="1060" height="1484" aria-describedby="previewLabel"></canvas>
+      </button>
+      <div class="preview-bottom" id="previewLabel" hidden></div>
+    </div>
+  </section>
+  <ol class="steps" aria-label="入景处理流程">
+    <li id="step1"><b>1</b><strong>透明人物抠图</strong><small>提取完整人物，保留衣物与可见肢体</small></li>
+    <li id="step2"><b>2</b><strong>自动定位入框</strong><small>根据模板的照片区域调整人物大小与位置</small></li>
+    <li id="step3"><b>3</b><strong>现场光影融合</strong><small>Seedream 根据场景统一色温、景深与光影</small></li>
+  </ol>
+  <div id="initialStatus"><div id="status" class="status" role="status" aria-live="polite">→ 先选模板，再拍照</div></div>
+</main>
+<dialog id="posterDialog" class="poster-dialog" aria-label="海报大图">
+  <div class="poster-toolbar"><span>成片预览</span><button type="button" id="closePoster" class="quiet" autofocus>关闭 ×</button></div>
+  <div id="posterViewport" class="poster-viewport" tabindex="0" aria-label="可滑动查看海报细节">
+    <img id="posterImage" alt="完整入景海报">
+  </div>
+</dialog>
+<footer>海幢街道文旅文创设计 · 人像融合实验室</footer>
+<dialog id="settings"><form id="configForm"><div class="dialog-title"><div><p class="eyebrow">VOLCENGINE ARK</p><h2>连接火山方舟</h2></div><button type="button" id="closeSettings" class="quiet">关闭 ×</button></div><section class="preset-setup"><strong>Seedream 人物与场景融合</strong><p>使用支持多图编辑的 Seedream 模型。根据所选模式处理人物定位，并匹配主照片中的光线、阴影和人物边缘，呈现自然的实拍效果。报纸版面由原模板保留。</p><p id="connection">待配置</p><p id="presetStatus" role="status"></p></section><details class="generation-settings"><summary>出图设置</summary><label class="quality-label" for="quality">出图模式</label><select id="quality"><option value="fast">快速 · 一次生成</option><option value="detail">精细 · 更高分辨率</option></select><p class="hint">快速模式一次生成成片。精细模式先抠图并显示人物入框预览，再融合光影。</p></details><label>API Key<input id="key" type="password" autocomplete="off" placeholder="填写新密钥；留空保留已有密钥"></label><label>图片模型 ID / 接入点 ID<input id="model" type="text" required autocomplete="off" placeholder="doubao-seedream-5-0-pro-260628"></label><p class="hint">从方舟控制台复制支持多图编辑的图片模型 ID，不能使用文字聊天模型。普通按量接口：https://ark.cn-beijing.volces.com/api/v3。</p><p id="keyStorageHint" class="hint">密钥仅保存在后端内存，重启后需重新填写；也可自行写入本地 .env。模型 ID 会保存。停止本地等待不保证云端取消或免除计费。</p><p id="configStatus" class="hint" role="status"></p><div class="dialog-actions"><button type="button" id="testConnection" class="secondary">检查已保存配置</button><button class="primary" type="submit">保存方舟设置</button></div></form></dialog>
+<dialog id="camera" aria-labelledby="cameraTitle">
+<div class="camera-top"><div><p class="eyebrow">SCENE CAMERA</p><h2 id="cameraTitle">在风景里，找到你的位置</h2></div><button id="closeCamera" class="quiet" aria-label="关闭拍摄">关闭 ×</button></div>
+<p id="cameraStatus" class="camera-status" role="status" aria-live="polite">准备启动摄像头。</p>
+<div id="cameraWell" class="camera-well"><div id="cameraFrame" class="camera-frame"><img id="cameraBackground" alt="当前拍摄场景底图"><div id="cameraTarget" class="camera-target"><video id="video" autoplay playsinline muted hidden></video><span class="camera-guide-caption">人物在框内即可 · AI 自动构图</span></div></div><button id="cameraPrev" class="scene-arrow previous" aria-label="切换到上一个背景">‹</button><button id="cameraNext" class="scene-arrow next" aria-label="切换到下一个背景">›</button></div>
+<div class="camera-bottom"><div class="camera-scene-label"><span id="cameraSceneName"></span><span id="cameraSceneCount"></span></div><p class="camera-tip">人物在背景框内、脸部清晰即可；无需对齐轮廓，AI 自动调整人物大小与半身构图。</p>
+<div class="camera-controls"><label class="camera-tool">相册<input id="cameraAlbum" type="file" accept="image/*" hidden></label><button id="capture" class="shutter" aria-label="拍摄并使用人物照片" disabled><span></span></button><button id="flipCamera" class="camera-tool" type="button">翻转</button></div>
+<div class="camera-secondary"><label class="camera-tool native-camera">使用系统相机<input id="cameraUpload" type="file" accept="image/*" capture="environment" hidden></label><button id="retryCamera" class="camera-tool" type="button">重试取景</button></div>
+<details class="camera-help"><summary>取景遇到问题？</summary><p>请允许浏览器访问相机。手机可直接选择系统相机，保留原生拍摄操作。系统相机内不显示网页的背景和位置提示。</p><label for="cameraUrl">网站地址</label><input id="cameraUrl" readonly><button id="copyCameraUrl" class="secondary">复制地址</button></details></div></dialog>
+<script type="module" src="app.js"></script></body></html>

@@ -1,0 +1,36 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "person.png"
+    },
+    "_meta": {
+      "title": "人物原片：上传你的测试照片"
+    }
+  },
+  "2": {
+    "class_type": "RecraftRemoveBackgroundNode",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "官方 Recraft 抠图：需要云端额度"
+    }
+  },
+  "3": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "2",
+        0
+      ],
+      "filename_prefix": "scene_cutout"
+    },
+    "_meta": {
+      "title": "保存透明人物 PNG（RGBA）"
+    }
+  }
+}

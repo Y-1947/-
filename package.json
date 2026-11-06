@@ -1,0 +1,19 @@
+{
+  "name": "scene-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.4",
+    "@netlify/functions": "^6.0.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^27.12.0"
+  }
+}

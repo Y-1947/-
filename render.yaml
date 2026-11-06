@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rujing-scene-studio
+    runtime: node
+    plan: free
+    buildCommand: node --check server.mjs
+    startCommand: node server.mjs
+    healthCheckPath: /
+    envVars:
+      - key: ARK_API_KEY
+        sync: false
+      - key: ARK_IMAGE_MODEL
+        value: doubao-seedream-5-0-pro-260628
